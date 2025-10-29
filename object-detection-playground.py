@@ -152,7 +152,7 @@ with col_input:
 
             # Run Roboflow workflow
             result = client.run_workflow(
-                workspace_name="dikshants-blog-workspace",
+                workspace_name="Object-Detection-Workflow",
                 workflow_id="object-detection-playground-workflow",
                 images={"image": tmp_path},
                 parameters={
