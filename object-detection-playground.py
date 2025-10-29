@@ -4,31 +4,37 @@ import streamlit as st
 import tempfile
 import os
 
+# 2. Connect to your workflow
 client = InferenceHTTPClient(
     api_url="https://serverless.roboflow.com",
-    api_key="YOUR_ROBOFLOW_KEY"
+    api_key=st.secrets["roboflow_api_key"]
 )
 
+# 3. Run your workflow on an image
 result = client.run_workflow(
-    workspace_name="YOUR_ROBOFLOW_WORKSPACE",
-    workflow_id="YOUR_ROBOFLOW_OBJECT_DETECTION_WORKFLOW",
+    workspace_name="cobadataid",
+    workflow_id="object-detection-workflow",
     images={
-        "image": "YOUR_IMAGE.jpg"
+        "image": "YOUR_IMAGE.jpg" # Path to your image file
     },
     parameters={
         "label_color_palette": "Matplotlib Pastel1",
         "bounding_box_color_palette": "ROBOFLOW",
         "bounding_box_thickness": 15,
-        "text_position": "TOP_LEFT",
-        "text_thickness": 4,
+        "class_filter": 0,
+        "model": "rfdetr-base",
         "text_color": "Black",
         "text_scale": 8,
-        "confidence": 0.4,
-        "class_filter": [],  # List of COCO classes to detect; leave empty to detect all        
-        "model": "rfdetr-base"
+        "confidance": 0.4,
+        "bounding_box_thickness": 15,
+        "text_position": "TOP_LEFT",
+        "text_thickness": 4
     },
-    use_cache=True # cache workflow definition for 15 minutes
+    use_cache=True # Speeds up repeated requests
 )
+
+# 4. Get your results
+print(result)
 
 # Additional Code to save the workflow output image
 import base64
