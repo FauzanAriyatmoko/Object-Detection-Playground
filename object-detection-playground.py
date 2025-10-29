@@ -1,50 +1,8 @@
 from inference_sdk import InferenceHTTPClient
-import base64
 import streamlit as st
 import tempfile
 import os
-
-# 2. Connect to your workflow
-client = InferenceHTTPClient(
-    api_url="https://serverless.roboflow.com",
-    api_key=st.secrets["roboflow_api_key"]
-)
-
-# 3. Run your workflow on an image
-result = client.run_workflow(
-    workspace_name="cobadataid",
-    workflow_id="object-detection-workflow",
-    images={
-        "image": "YOUR_IMAGE.jpg" # Path to your image file
-    },
-    parameters={
-        "label_color_palette": "Matplotlib Pastel1",
-        "bounding_box_color_palette": "ROBOFLOW",
-        "bounding_box_thickness": 15,
-        "class_filter": 0,
-        "model": "rfdetr-base",
-        "text_color": "Black",
-        "text_scale": 8,
-        "confidance": 0.4,
-        "bounding_box_thickness": 15,
-        "text_position": "TOP_LEFT",
-        "text_thickness": 4
-    },
-    use_cache=True # Speeds up repeated requests
-)
-
-# 4. Get your results
-print(result)
-
-# Additional Code to save the workflow output image
 import base64
-
-base64_data = result[0]['label_visualization']
-# Decode and save to file
-with open("object_detection.jpg", "wb") as f:
-    f.write(base64.b64decode(base64_data))
-
-print("Image saved as object_detection.jpg")
 
 st.title("🔍 Object Detection Playground")
 
@@ -150,11 +108,11 @@ if uploaded_file is not None and uploaded_file != st.session_state.uploaded_imag
     st.session_state.uploaded_image = uploaded_file
     st.session_state.detected_image = None
 
-    # Load API key from environment variable
-api_key = os.getenv("ROBOFLOW_KEY")
+# Load API key from streamlit secrets
+api_key = st.secrets["roboflow_api_key"]
 
 if not api_key:
-    raise ValueError("❌ ROBOFLOW_KEY not set in environment variables")
+    raise ValueError("❌ ROBOFLOW_KEY not set in streamlit secrets")
 
 # Initialize Roboflow client
 client = InferenceHTTPClient(
